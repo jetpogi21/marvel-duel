@@ -5,12 +5,18 @@ import theme from "../theme"
 import { MyAppInitialProps } from "../types";
 
 import '@/styles/globals.css'
+import Navbar from "../components/Navbar";
 
 export default function App({ Component, pageProps, emotionCache }: MyAppInitialProps) {
   return (
     <ThemeProvider theme={theme}>
+      
       <CssBaseline />
-      <Component {...pageProps} />
+      {/* @ts-ignore */}
+      <Navbar>
+        <Component {...pageProps} />
+      </Navbar>
+      
     </ThemeProvider>
   )
 }
