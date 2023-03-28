@@ -96,7 +96,7 @@ const CardProvider = ({ children }: { children: ReactNode }) => {
   );
 
   const fetchData = async () => {
-    const urls = ["/decks", "/keywords"];
+    const urls = ["/decks", "/card-keywords"];
     let deckResponse: BasicModel[], keywordResponse: BasicModel[];
 
     // Use a source object to cancel requests
@@ -107,6 +107,7 @@ const CardProvider = ({ children }: { children: ReactNode }) => {
     ).then((response) => {
       deckResponse = response[0].data.data || [];
       keywordResponse = response[1].data.data || [];
+      console.log({ deckResponse, keywordResponse });
       dispatch({ type: CardActionType.SET_DECKS, payload: deckResponse });
       dispatch({ type: CardActionType.SET_KEYWORDS, payload: keywordResponse });
     });

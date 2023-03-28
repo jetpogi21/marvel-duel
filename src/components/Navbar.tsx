@@ -53,7 +53,7 @@ const Navbar = () => {
     <AppBar position="static">
       <Stack
         direction="row"
-        maxWidth={"md"}
+        maxWidth={"lg"}
         sx={{ width: "100%", "& .MuiToolbar-root": { px: 0 } }}
         mx="auto"
       >
