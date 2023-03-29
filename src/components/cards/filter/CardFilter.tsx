@@ -22,7 +22,6 @@ const CardFilter = (props: CardFilterProps) => {
   return (
     <Box
       sx={{
-        my: 3,
         boxShadow: 1,
         width: "33.33%",
         flex: "0 0 auto",
@@ -108,6 +107,7 @@ const CardFilter = (props: CardFilterProps) => {
                   { value: "t", label: "Tactic" },
                 ]}
                 row={false}
+                numColumns={2}
                 radioProps={{ size: "small" }}
               />
               <MUIRadio

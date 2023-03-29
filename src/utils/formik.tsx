@@ -342,6 +342,7 @@ export interface MUIRadioProp {
   items: { value: string; label: string }[];
   radioProps?: any;
   row?: boolean;
+  numColumns?: number;
   [x: string]: any;
 }
 
@@ -350,6 +351,7 @@ export const MUIRadio = ({
   items,
   radioProps,
   row = true,
+  numColumns = 1,
   ...props
 }: MUIRadioProp) => {
   const [field, meta, { setValue }] = useField(props);
@@ -373,12 +375,15 @@ export const MUIRadio = ({
 
   const { onChange, onBlur, value, ...otherField } = field;
 
-  const createItems = () => {
+  const createItems = (numColumns: number) => {
     return items.map((item) => {
       const { value, label } = item;
       return (
         <FormControlLabel
-          sx={{ textTransform: "capitalize" }}
+          sx={{
+            textTransform: "capitalize",
+            flexBasis: `${100 / numColumns}%`,
+          }}
           key={label}
           value={value}
           control={<Radio {...radioProps} />}
@@ -394,6 +399,7 @@ export const MUIRadio = ({
       <FormLabel id={labelId}>{label}</FormLabel>
       <RadioGroup
         row={row}
+        sx={{ display: "flex", flexWrap: "wrap" }}
         aria-labelledby={labelId}
         value={internalVal}
         onChange={handleChange}
@@ -401,7 +407,7 @@ export const MUIRadio = ({
         {...otherField}
         {...props}
       >
-        {createItems()}
+        {createItems(numColumns)}
       </RadioGroup>
       {hasError ? <FormHelperText>{meta.error}</FormHelperText> : null}
     </FormControl>

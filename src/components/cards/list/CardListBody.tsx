@@ -3,6 +3,7 @@ import React from "react";
 import { useCardContext } from "../../../contexts/CardContext";
 import useCards from "../../../hooks/useCards";
 import CardFilter from "../filter/CardFilter";
+import CardGrid from "./CardGrid";
 import { CardListHeader } from "./CardListHeader";
 
 const CardListBody = () => {
@@ -33,8 +34,7 @@ const CardListBody = () => {
             modifySort={modifySort}
           />
         </Stack>
-        <Stack direction="row" gap={2} alignItems={"flex-start"}>
-          {/* <CardGrid /> */}
+        <Stack direction="row" gap={2} alignItems={"flex-start"} sx={{ my: 2 }}>
           {decks && keywords ? (
             <CardFilter
               decks={decks}
@@ -45,6 +45,7 @@ const CardListBody = () => {
           ) : (
             ""
           )}
+          <CardGrid />
         </Stack>
       </Container>
     </Box>
