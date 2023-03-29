@@ -26,6 +26,7 @@ import { FieldArray, isObject, useField } from "formik";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useState } from "react";
+import { BasicModel } from "../interfaces/GeneralInterfaces";
 
 const filter = createFilterOptions();
 
@@ -91,7 +92,7 @@ export const MUIFileUpload = ({
 
 export interface MUIAutocompleteProp {
   label: string;
-  items: { id: number; name: string }[];
+  items: BasicModel[];
   multiple: boolean;
   newInputHandler?: (arg0: string) => void;
   freeSolo: boolean;
@@ -170,7 +171,7 @@ export const MUIAutocomplete = ({
         // @ts-ignore
         isOptionEqualToValue={(option, value) => {
           // @ts-ignore
-          return parseInt(option.id) === parseInt(value.id);
+          return parseInt(option.id) == parseInt(value.id);
         }}
         freeSolo={freeSolo}
         renderInput={(params) => {

@@ -9,16 +9,11 @@ import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 
 import React from "react";
 import ListItemIcon from "@mui/material/ListItemIcon";
+import { SortOptions } from "../../interfaces/GeneralInterfaces";
 
 interface SortMenuProps {
-  sortOptions: {
-    sortedBy: [string, string];
-    list: {
-      name: string;
-      caption: string;
-    }[];
-  };
-  modifySort: (name: string) => void;
+  sortOptions: SortOptions;
+  modifySort: (name: string, sortOptions: SortOptions) => void;
 }
 
 const SortMenu = ({ sortOptions, modifySort }: SortMenuProps) => {
@@ -60,7 +55,7 @@ const SortMenu = ({ sortOptions, modifySort }: SortMenuProps) => {
         {sortOptions.list.map((item) => (
           <MenuItem
             onClick={() => {
-              modifySort(item.name);
+              modifySort(item.name, sortOptions);
               setAnchorEl(null);
             }}
             key={item.name}

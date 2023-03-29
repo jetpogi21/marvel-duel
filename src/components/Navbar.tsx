@@ -54,7 +54,7 @@ const Navbar = () => {
       <Stack
         direction="row"
         maxWidth={"lg"}
-        sx={{ width: "100%", "& .MuiToolbar-root": { px: 0 } }}
+        sx={{ width: "100%", "& .MuiToolbar-root": { px: { xs: 2, lg: 0 } } }}
         mx="auto"
       >
         <Toolbar sx={{ width: "100%" }}>

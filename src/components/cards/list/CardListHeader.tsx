@@ -1,17 +1,24 @@
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
+import Select, { SelectChangeEvent } from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Button from "@mui/material/Button";
 import Box from "@mui/material/Box";
 import React from "react";
-import useCards from "../../../hooks/useCards";
 import SortMenu from "../../sortMenu/SortMenu";
 import Stack from "@mui/material/Stack";
 import Link from "next/link";
+import { SortOptions } from "../../../interfaces/GeneralInterfaces";
 
-export const CardListHeader = () => {
-  const { limit, handleLimitChange, sortOptions, modifySort } = useCards()!;
+type CardListHeaderProps = {
+  limit: string;
+  handleLimitChange: (event: SelectChangeEvent<string | string[]>) => void;
+  sortOptions: SortOptions;
+  modifySort: (name: string, sortOptions: SortOptions) => void;
+};
+
+export const CardListHeader = (props: CardListHeaderProps) => {
+  const { limit, handleLimitChange, sortOptions, modifySort } = props;
 
   return (
     <>

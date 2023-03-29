@@ -3,17 +3,29 @@ import { Formik } from "formik";
 import React from "react";
 import { useCardContext } from "../../../contexts/CardContext";
 import useCardFilter from "../../../hooks/useCardFilter";
+import { CardQuery } from "../../../interfaces/CardInterfaces";
+import { BasicModel } from "../../../interfaces/GeneralInterfaces";
 import { MUIAutocomplete, MUIRadio, MUIText } from "../../../utils/formik";
 
-const CardFilter = () => {
-  const { initialValues, handleFormikSubmit, resetToDefault } = useCardFilter();
-  const { decks, keywords } = useCardContext()!;
+type CardFilterProps = {
+  decks: BasicModel[];
+  keywords: BasicModel[];
+  defaultValue: CardQuery;
+  initialValues: CardQuery;
+};
+
+const CardFilter = (props: CardFilterProps) => {
+  const { defaultValue, initialValues, decks, keywords } = props;
+
+  const { handleFormikSubmit, resetToDefault } = useCardFilter(defaultValue);
 
   return (
     <Box
       sx={{
         my: 3,
         boxShadow: 1,
+        width: "33.33%",
+        flex: "0 0 auto",
         minWidth: "300px",
         height: "auto",
       }}
@@ -50,7 +62,7 @@ const CardFilter = () => {
                   {...{
                     label: "Decks",
                     items: decks,
-                    name: "deck",
+                    name: "deckID",
                     multiple: true,
                     freeSolo: false,
                   }}
@@ -63,7 +75,7 @@ const CardFilter = () => {
                   {...{
                     label: "Keywords",
                     items: keywords,
-                    name: "keyword",
+                    name: "keywords",
                     multiple: true,
                     freeSolo: false,
                   }}
@@ -100,7 +112,7 @@ const CardFilter = () => {
               />
               <MUIRadio
                 label="Battle style"
-                name="bs"
+                name="battleStyle"
                 items={[
                   { value: "all", label: "all" },
                   { value: "a", label: "attack" },

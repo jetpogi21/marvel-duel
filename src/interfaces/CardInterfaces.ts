@@ -1,7 +1,6 @@
 import { BasicModel } from "./GeneralInterfaces";
 
 //This is the shape of the object that will come from the API
-
 interface CardKeywordModel extends BasicModel {
   CardCardKeyword: { id: number };
 }
@@ -46,9 +45,9 @@ export interface CardFormModel {
 export interface CardQuery {
   q: string;
   cost: string;
-  deck: BasicModel[];
-  keyword: BasicModel[];
+  deckID: BasicModel[];
+  keywords: BasicModel[];
   type: string;
-  bs: string;
+  battleStyle: string;
   [key: string]: unknown;
 }
