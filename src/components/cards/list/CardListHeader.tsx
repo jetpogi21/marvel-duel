@@ -22,14 +22,20 @@ export const CardListHeader = (props: CardListHeaderProps) => {
 
   return (
     <>
-      <Button size="small" variant="contained">
-        <Link href="/new" style={{ textDecoration: "none", color: "inherit" }}>
+      <Button variant="contained">
+        <Link
+          href="cards/new"
+          style={{ textDecoration: "none", color: "inherit" }}
+        >
           Add New
         </Link>
       </Button>
       <Stack direction="row" ml="auto" gap={2}>
         <Box width="75px">
-          <FormControl fullWidth={true}>
+          <FormControl
+            fullWidth={true}
+            sx={{ "& .MuiInputBase-inputSizeSmall": { py: "6.5px" } }}
+          >
             <InputLabel id="limit-label">Limit</InputLabel>
             <Select
               labelId="limit-label"

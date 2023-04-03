@@ -1,53 +1,55 @@
-import { BasicModel } from "./GeneralInterfaces";
+import { BasicModel, ListQuery } from "./GeneralInterfaces";
 
 //This is the shape of the object that will come from the API
-interface CardKeywordModel extends BasicModel {
-  CardCardKeyword: { id: number };
-}
-
-interface CardKeywordFromList {
-  cardcardkeyword_id?: number;
-  card_id?: number;
-  cardkeyword_id?: number;
-  name?: string;
-}
-
 export interface CardModel {
-  id: number;
+  id: string | number;
   name: string;
-  type: "c" | "w" | "t" | "p";
-  cost: number;
-  battleStyle: "a" | "g" | "s" | null;
-  atk: number | string;
-  shield: number | string;
+  type: string;
+  cost: string | number;
+  battleStyle: "Attack" | "Guardian" | "Support" | null;
+  atk?: string | number | null;
+  shield?: string | number | null;
   description: string;
-  deckId: number | string;
-  BelongsTo: BasicModel;
-  CardKeywords: (CardKeywordModel | CardKeywordFromList)[];
-  CardUnityCards: string[];
+  deckId: string | number;
+  Deck: BasicModel;
+  slug: string;
+  CardCardKeywords?: CardCardKeywordsEntity[] | null;
+  CardUnityCards?: CardUnityCardsEntity[] | null;
 }
 
-export interface CardFormModel {
-  id: string;
-  name: string;
-  type: "c" | "w" | "t" | "p";
-  cost: number | string;
-  battleStyle: "a" | "g" | "s" | "";
-  atk: number | string;
-  shield: number | string;
+export interface CardCardKeywordsEntity {
+  id: number;
+  cardId: number;
+  cardKeywordId: number;
+  CardKeyword: BasicModel;
+}
+
+export interface CardUnityCardsEntity {
+  id: number;
   description: string;
-  deckId: number | string;
-  CardKeywords: CardKeywordModel[];
-  [key: string]: unknown;
+  CardUnityId: number;
+  CardId: number;
+  CardUnity: CardUnity;
+}
+
+export interface CardUnity {
+  id: number;
+  cardCompositions: string;
+}
+
+export interface CardFormModel
+  extends Omit<CardModel, "Deck" | "CardUnityCards" | "battleStyle" | "slug"> {
+  battleStyle: "Attack" | "Guardian" | "Support" | "";
 }
 
 //This is the shape of the filter parameter from filter form
 export interface CardQuery {
-  q: string;
+  battleStyle: string;
   cost: string;
   deckID: BasicModel[];
-  keywords: BasicModel[];
+  q: string;
   type: string;
-  battleStyle: string;
+  keywords: BasicModel[];
+  hasCardUnity: boolean;
   [key: string]: unknown;
 }

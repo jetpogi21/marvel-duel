@@ -53,7 +53,7 @@ const Navbar = () => {
     <AppBar position="static">
       <Stack
         direction="row"
-        maxWidth={"lg"}
+        maxWidth={"xl"}
         sx={{ width: "100%", "& .MuiToolbar-root": { px: { xs: 2, lg: 0 } } }}
         mx="auto"
       >
@@ -62,7 +62,7 @@ const Navbar = () => {
             Marvel Duel
           </Typography>
           <Stack direction="row" spacing={2}>
-            <NavbarLink href="/" routerHref={routerHref} caption="Cards" />
+            <NavbarLink href="/cards" routerHref={routerHref} caption="Cards" />
             <NavbarLink
               href="/heroes"
               routerHref={routerHref}

@@ -22,11 +22,11 @@ import {
   FilterOptionsState,
 } from "@mui/material";
 
-import { FieldArray, isObject, useField } from "formik";
+import { useField } from "formik";
 import Link from "next/link";
 import { useEffect } from "react";
 import { useState } from "react";
-import { BasicModel } from "../interfaces/GeneralInterfaces";
+import { BasicModel, ControlChoice } from "../interfaces/GeneralInterfaces";
 
 const filter = createFilterOptions();
 
@@ -94,7 +94,7 @@ export interface MUIAutocompleteProp {
   label: string;
   items: BasicModel[];
   multiple: boolean;
-  newInputHandler?: (arg0: string) => void;
+  newInputHandler?: (arg0: { inputValue: string }) => void;
   freeSolo: boolean;
   name: string;
   [x: string]: any;
@@ -130,60 +130,76 @@ export const MUIAutocomplete = ({
     return filtered;
   };
 
+  const processMultipleValues = async (newValue: unknown) => {
+    if (!newValue || !Array.isArray(newValue)) {
+      return [];
+    }
+
+    return await Promise.all(
+      newValue.map(async (item) => {
+        if (item.inputValue && newInputHandler) {
+          //@ts-ignore
+          return newInputHandler(item);
+        } else {
+          return item;
+        }
+      })
+    );
+  };
+
+  const processSingleValue = async (newValue: { inputValue: string }) => {
+    if (newValue.inputValue && newInputHandler) {
+      return newInputHandler(newValue);
+    } else {
+      return newValue;
+    }
+  };
+
+  const handleChange = async (event: any, newValue: { inputValue: string }) => {
+    let processedValue;
+
+    if (multiple) {
+      processedValue = await processMultipleValues(newValue);
+    } else {
+      processedValue = await processSingleValue(newValue);
+    }
+
+    setValue(processedValue);
+  };
+
+  //@ts-ignore
+  const isOptionEqualToValue = (option, value) => {
+    return parseInt(option.id) === parseInt(value.id);
+  };
+
+  //@ts-ignore
+  const renderInput = (params) => {
+    return (
+      <TextField
+        error={!!hasError}
+        helperText={meta.touched && meta.error ? meta.error : null}
+        {...params}
+        label={label}
+      />
+    );
+  };
+
   return (
     <FormControl fullWidth size="small" sx={{ borderColor: "danger.main" }}>
       <Autocomplete
         size="small"
         multiple={multiple}
         options={items}
-        // @ts-ignore
+        //@ts-ignore
         getOptionLabel={(option) => option.name}
         filterSelectedOptions
         value={field.value}
         filterOptions={filterOptions}
-        onChange={async (event, newValue) => {
-          console.log({ newValue });
-          let processedValue;
-          if (multiple) {
-            if (newValue && Array.isArray(newValue)) {
-              processedValue = await Promise.all(
-                newValue.map(async (item) => {
-                  if (item.inputValue) {
-                    // @ts-ignore
-                    return await newInputHandler(item);
-                  } else {
-                    return item;
-                  }
-                })
-              );
-            }
-          } else {
-            // @ts-ignore
-            if (newValue?.inputValue) {
-              // @ts-ignore
-              processedValue = await newInputHandler(newValue);
-            } else {
-              processedValue = newValue;
-            }
-          }
-          setValue(processedValue);
-        }}
-        // @ts-ignore
-        isOptionEqualToValue={(option, value) => {
-          // @ts-ignore
-          return parseInt(option.id) == parseInt(value.id);
-        }}
+        //@ts-ignore
+        onChange={handleChange}
+        isOptionEqualToValue={isOptionEqualToValue}
         freeSolo={freeSolo}
-        renderInput={(params) => {
-          return (
-            <TextField
-              error={!!hasError}
-              helperText={meta.touched && meta.error ? meta.error : null}
-              {...params}
-              label={label}
-            />
-          );
-        }}
+        renderInput={renderInput}
         selectOnFocus
         clearOnBlur
         handleHomeEndKeys
@@ -274,8 +290,8 @@ export const MUISwitch = ({ label, ...props }: MUISwitchProp) => {
 export interface MUISelectProp {
   label: string;
   name: string;
-  items: { value: string; label: string }[];
-  [x: string]: any;
+  items: ControlChoice[];
+  [x: string]: unknown;
 }
 
 export const MUISelect = ({ label, items, ...props }: MUISelectProp) => {
@@ -339,7 +355,7 @@ export const MUISelect = ({ label, items, ...props }: MUISelectProp) => {
 export interface MUIRadioProp {
   label: string;
   name: string;
-  items: { value: string; label: string }[];
+  items: ControlChoice[];
   radioProps?: any;
   row?: boolean;
   numColumns?: number;
@@ -375,14 +391,13 @@ export const MUIRadio = ({
 
   const { onChange, onBlur, value, ...otherField } = field;
 
-  const createItems = (numColumns: number) => {
+  const createItems = () => {
     return items.map((item) => {
       const { value, label } = item;
       return (
         <FormControlLabel
           sx={{
             textTransform: "capitalize",
-            flexBasis: `${100 / numColumns}%`,
           }}
           key={label}
           value={value}
@@ -395,11 +410,22 @@ export const MUIRadio = ({
 
   return (
     // @ts-ignore
-    <FormControl sx={{ px: 1 }} error={hasError}>
+    <FormControl error={hasError}>
       <FormLabel id={labelId}>{label}</FormLabel>
       <RadioGroup
-        row={row}
-        sx={{ display: "flex", flexWrap: "wrap" }}
+        sx={{
+          flexDirection: row ? "row" : "column",
+          "& .MuiFormControlLabel-root": {
+            mr: row && numColumns === 1 ? 2 : 0,
+            ml: -0.5,
+            flexBasis:
+              row && numColumns === 1 ? "auto" : `${100 / numColumns}%`,
+            flexGrow: row && numColumns === 1 ? 0 : 1,
+          },
+          "& .MuiButtonBase-root": {
+            p: 0.5,
+          },
+        }}
         aria-labelledby={labelId}
         value={internalVal}
         onChange={handleChange}
@@ -407,7 +433,7 @@ export const MUIRadio = ({
         {...otherField}
         {...props}
       >
-        {createItems(numColumns)}
+        {createItems()}
       </RadioGroup>
       {hasError ? <FormHelperText>{meta.error}</FormHelperText> : null}
     </FormControl>
@@ -417,7 +443,7 @@ export const MUIRadio = ({
 export interface MUICheckboxGroupProp {
   label: string;
   name: string;
-  items: { id: string; name: string }[];
+  items: BasicModel[];
   cbProps: any;
   row: boolean;
   [x: string]: any;

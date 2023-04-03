@@ -14,8 +14,8 @@ import axios from "axios";
 interface CardContextValue {
   decks?: BasicModel[];
   keywords?: BasicModel[];
-  battleStyles?: { id: string; name: string }[];
-  types?: { id: string; name: string }[];
+  battleStyles?: BasicModel[];
+  types?: BasicModel[];
   costs?: number[];
   handleKeywordAddition?: (item: BasicModel) => void;
 }
@@ -68,24 +68,24 @@ const CardProvider = ({ children }: { children: ReactNode }) => {
   });
 
   // Use useMemo hook to memoize the static values
-  const battleStyles = useMemo(
+  const battleStyles: BasicModel[] = useMemo(
     () => [
-      { id: "a", name: "Attack" },
-      { id: "g", name: "Guardian" },
-      { id: "s", name: "Support" },
+      { id: "Attack", name: "Attack" },
+      { id: "Guardian", name: "Guardian" },
+      { id: "Support", name: "Support" },
     ],
     []
   );
-  const types = useMemo(
+  const types: BasicModel[] = useMemo(
     () => [
-      { id: "c", name: "character" },
-      { id: "w", name: "Weapon" },
-      { id: "p", name: "Power" },
-      { id: "t", name: "Tactic" },
+      { id: "Character", name: "character" },
+      { id: "Weapon", name: "Weapon" },
+      { id: "Power", name: "Power" },
+      { id: "Tactic", name: "Tactic" },
     ],
     []
   );
-  const costs = useMemo(() => [2, 3, 4, 5, 6], []);
+  const costs: number[] = useMemo(() => [2, 3, 4, 5, 6], []);
 
   // Use useCallback hook to memoize the function
   const handleKeywordAddition = useCallback(
@@ -128,8 +128,6 @@ const CardProvider = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     fetchData();
   }, []);
-
-  console.log({ decks: state.decks });
 
   return (
     <CardContext.Provider

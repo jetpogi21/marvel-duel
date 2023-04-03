@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { CardModel, CardQuery } from "../interfaces/CardInterfaces";
 import axiosClient from "../utils/api";
 import { useRouter } from "next/router";
-import { red, orange, blue } from "@mui/material/colors";
 
 import {
   getAxiosParams,
@@ -14,32 +13,38 @@ import {
 } from "../utils/utilities";
 import { SelectChangeEvent } from "@mui/material/Select/SelectInput";
 import { useCardContext } from "../contexts/CardContext";
-import { SortOptions } from "../interfaces/GeneralInterfaces";
+import {
+  NameCaption,
+  SortOptions,
+  SortPair,
+} from "../interfaces/GeneralInterfaces";
+import { ParsedUrlQuery } from "querystring";
 
-const useCards = () => {
-  const { decks, keywords } = useCardContext();
-  const [cards, setCards] = useState<CardModel[]>([]);
+//This will be used for the URL query parameters and the default values of the filter form
+const defaultValue: CardQuery = {
+  cost: "all",
+  deckID: [],
+  q: "",
+  keywords: [],
+  type: "all",
+  battleStyle: "all",
+  hasCardUnity: false,
+};
 
-  console.log({ cards });
-  const [gridLoading, setGridLoading] = useState(true);
-  const [recordCount, setRecordCount] = useState(0);
+const useCards = (query: ParsedUrlQuery) => {
+  const { decks, keywords, battleStyles, types, costs } = useCardContext();
+  const [cards, setCards] = useState<CardModel[]>([]); //the cards fetched using the current URL
+
+  const [gridLoading, setGridLoading] = useState(true); //to control the loading state of the table
+  const [recordCount, setRecordCount] = useState(0); //for pagination
 
   const router = useRouter();
-  const query = router.query;
-
   //Initial values for the filter form
-  const defaultValue: CardQuery = {
-    cost: "all",
-    deckID: [],
-    q: "",
-    keywords: [],
-    type: "all",
-    battleStyle: "all",
-  };
 
-  //Re-assign the defaultValues depending on the query of the URL
+  //Create the initial values of the filter form depending on the URL queries.
   const initialValues: CardQuery = getFilterValueFromURL(query, defaultValue);
 
+  //This will supply the name key for each array of objects
   if (decks) {
     supplyMissingNames(decks, initialValues.deckID);
   }
@@ -49,18 +54,20 @@ const useCards = () => {
   }
 
   //Sort Method starts here
+  const sortedBy: SortPair = getSortedBy(query, ["id", "desc"]); //get the sort pair based on the URL and the default if not present
+  const sortList: NameCaption[] = [
+    { name: "id", caption: "Most Recent" },
+    { name: "name", caption: "Name" },
+    { name: "cost", caption: "Cost" },
+    { name: "atk", caption: "ATK" },
+    { name: "shield", caption: "Shield" },
+  ];
   const sortOptions: SortOptions = {
-    sortedBy: getSortedBy(query, ["id", "desc"]),
-    list: [
-      { name: "id", caption: "Most Recent" },
-      { name: "name", caption: "Name" },
-      { name: "cost", caption: "Cost" },
-      { name: "atk", caption: "ATK" },
-      { name: "shield", caption: "Shield" },
-    ],
+    sortedBy,
+    list: sortList,
   };
 
-  //handle of click of the sort menu
+  //handle of click of the sort menu (name would be the name of the field to be submitted to the server)
   const modifySort = (name: string, sortOptions: SortOptions) => {
     if (name === sortOptions.sortedBy[0]) {
       const value = sortOptions.sortedBy[1] === "desc" ? name : `-${name}`;
@@ -76,6 +83,7 @@ const useCards = () => {
   const handleLimitChange = (event: SelectChangeEvent<string | string[]>) => {
     const value = event.target.value;
     setQueryStringParam(query, "limit", value);
+    delete query["page"];
     router.push({ pathname: router.pathname, query });
   };
 
@@ -92,8 +100,9 @@ const useCards = () => {
         },
       });
 
+      console.log({ cards: data.data });
       setCards(data.data || []);
-      setRecordCount(data.count);
+      setRecordCount(data.totalRecordCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -106,26 +115,30 @@ const useCards = () => {
     fetchCards();
   }, [query]);
 
-  //a helper function that will get the card's backColor
-  const getBackColor = (battleStyle: "a" | "g" | "s" | null) => {
-    if (!battleStyle) {
-      return "white";
-    }
-    const colorObject = { a: red[500], s: orange[500], g: blue[500] };
-    return colorObject[battleStyle];
-  };
+  //Breadcrumbs
+  const breadCrumbLinks = [
+    {
+      href: "/cards",
+      caption: "Card List",
+    },
+  ];
 
   return {
+    decks,
+    keywords,
     cards,
     gridLoading,
     recordCount,
-    getBackColor,
     initialValues,
     defaultValue,
     sortOptions,
     modifySort,
     limit: getFirstItem(query.limit, "20"),
     handleLimitChange,
+    battleStyles,
+    types,
+    costs,
+    breadCrumbLinks,
   };
 };
 

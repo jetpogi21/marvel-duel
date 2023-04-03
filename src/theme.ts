@@ -13,6 +13,9 @@ const theme = createTheme({
       hover: "#ffffff",
     },
   },
+  typography: {
+    fontSize: 12,
+  },
 });
 
 export default theme;

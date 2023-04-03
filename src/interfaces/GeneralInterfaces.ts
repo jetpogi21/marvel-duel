@@ -19,3 +19,14 @@ export interface SortOptions {
   sortedBy: SortPair;
   list: NameCaption[];
 }
+
+export interface ControlChoice {
+  value: string;
+  label: string;
+}
+
+export interface ListQuery {
+  sort: string;
+  page: string;
+  limit: string;
+}

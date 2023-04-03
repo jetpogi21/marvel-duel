@@ -6,6 +6,7 @@ import { MyAppInitialProps } from "../types";
 
 import "@/styles/globals.css";
 import Navbar from "../components/Navbar";
+import { AppProvider } from "../contexts/Global";
 
 export default function App({
   Component,
@@ -13,10 +14,12 @@ export default function App({
   emotionCache,
 }: MyAppInitialProps) {
   return (
-    <ThemeProvider theme={theme}>
-      <CssBaseline />
-      <Navbar />
-      <Component {...pageProps} />
-    </ThemeProvider>
+    <AppProvider>
+      <ThemeProvider theme={theme}>
+        <CssBaseline />
+        <Navbar />
+        <Component {...pageProps} />
+      </ThemeProvider>
+    </AppProvider>
   );
 }

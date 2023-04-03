@@ -16,7 +16,20 @@ interface SortMenuProps {
   modifySort: (name: string, sortOptions: SortOptions) => void;
 }
 
+const SortIcon = (sortDirection: any) => {
+  return (
+    <ListItemIcon sx={{ color: "white" }}>
+      {sortDirection === "desc" ? (
+        <ArrowDownwardIcon sx={{ ml: "auto" }} fontSize="small" />
+      ) : (
+        <ArrowUpwardIcon sx={{ ml: "auto" }} fontSize="small" />
+      )}
+    </ListItemIcon>
+  );
+};
+
 const SortMenu = ({ sortOptions, modifySort }: SortMenuProps) => {
+  //console.log({ sortOptions });
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
   const handleClick = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -31,6 +44,14 @@ const SortMenu = ({ sortOptions, modifySort }: SortMenuProps) => {
     ...sortOptions.list.map((item) => item.caption.length)
   );
 
+  //Get the current sort caption..
+  const sortOptionName = sortOptions.sortedBy[0];
+  const sortList = sortOptions.list;
+  const sortDirection = sortOptions.sortedBy[1];
+  const currentCaption = sortList.find(
+    (item) => item.name === sortOptionName
+  )?.caption;
+
   return (
     <Box>
       <Button
@@ -41,7 +62,9 @@ const SortMenu = ({ sortOptions, modifySort }: SortMenuProps) => {
         aria-expanded={open ? "true" : undefined}
         onClick={handleClick}
       >
-        Sort
+        {currentCaption}
+        {SortIcon(sortDirection)}
+        {/* <SortIcon sortDirection={sortDirection} /> */}
       </Button>
       <Menu
         id="basic-menu"

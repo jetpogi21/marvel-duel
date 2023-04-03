@@ -15,6 +15,7 @@ const useCardFilter = (defaultValue: CardQuery) => {
       values as Partial<CardQuery>,
       defaultValue
     ) as ParsedUrlQueryInput;
+
     router.push({ pathname: router.pathname, query: params });
   };
 
